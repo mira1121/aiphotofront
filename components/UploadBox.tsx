@@ -13,6 +13,7 @@ interface ApiResponse {
 export default function UploadBox() {
   const [loading, setLoading] = useState(false);
   const { setImages } = useImageContext();
+  const [error, setError] = useState<boolean>(true);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -49,6 +50,7 @@ export default function UploadBox() {
     try {
     } catch (err) {
       console.error("Upload failed", err);
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -104,6 +106,16 @@ export default function UploadBox() {
             </span>
           </div>
         </label>
+        {error && (
+          <p className="text-red-500 text-center mb-4">
+            Зураг оруулахад алдаа гарлаа. Дахин оролдоно уу.
+            <p>
+              {" "}
+              / Backend service inactive байгаа байх. Backend ын url руу ороод
+              дахин ачаалалтал хүлээж байгаад дахиж оролдоно уу /{" "}
+            </p>
+          </p>
+        )}
       </div>
     </div>
   );
