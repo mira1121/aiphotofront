@@ -39,7 +39,7 @@ export default function UploadBox() {
         }
       );
       if (res.data && res.data.path) {
-        let path = (process.env.NEXT_PUBLIC_API_URL ?? "") + res.data.path;
+        const path = (process.env.NEXT_PUBLIC_API_URL ?? "") + res.data.path;
         setImages(((prev: any) => [...prev, path]) as unknown as string[]);
         if (!Cookies.get("token")) {
           Cookies.set("token", res.data.user || "", { expires: 30 });
