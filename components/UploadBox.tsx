@@ -12,7 +12,7 @@ interface ApiResponse {
 
 export default function UploadBox() {
   const [loading, setLoading] = useState(false);
-  const { images, setImages } = useImageContext();
+  const { setImages } = useImageContext();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -39,10 +39,8 @@ export default function UploadBox() {
         }
       );
       if (res.data && res.data.path) {
-        setImages((prev: string[]) => [
-          ...prev,
-          (process.env.NEXT_PUBLIC_API_URL ?? "") + res.data.path,
-        ]);
+        let path = (process.env.NEXT_PUBLIC_API_URL ?? "") + res.data.path;
+        setImages(((prev: any) => [...prev, path]) as unknown as string[]);
         if (!Cookies.get("token")) {
           Cookies.set("token", res.data.user || "", { expires: 30 });
         }
