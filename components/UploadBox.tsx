@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 import { useImageContext } from "../app/context";
 
 interface ApiResponse {
-  path: any;
+  path: string;
   user?: string;
 }
 
@@ -40,7 +40,7 @@ export default function UploadBox() {
       );
       if (res.data && res.data.path) {
         const path = (process.env.NEXT_PUBLIC_API_URL ?? "") + res.data.path;
-        setImages(((prev: any) => [...prev, path]) as unknown as string[]);
+        setImages(((prev: string[]) => [...prev, path]) as unknown as string[]);
         if (!Cookies.get("token")) {
           Cookies.set("token", res.data.user || "", { expires: 30 });
         }
