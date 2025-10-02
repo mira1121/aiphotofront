@@ -1,0 +1,112 @@
+"use client";
+
+import { useState } from "react";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useImageContext } from "../app/context";
+
+interface ApiResponse {
+  path: any;
+  user?: string;
+}
+
+export default function UploadBox() {
+  const [loading, setLoading] = useState(false);
+  const { images, setImages } = useImageContext();
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setLoading(true);
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append(
+      "prompt",
+      "Зураг нь дээрх голлох хүний гадаад паспортын зураг шиг өндөр чанартай, цэвэрхэн, цагаан арьстай, пиджактай, жинхэнэ хүний зураг байх ёстой. Өмнөх зурагнаас өөр хэлбэрээр янзалсан өөр фиджактай ч юмуу зураг байх ёстой."
+    );
+    formData.append("type", "1");
+    for (let index = 0; index < 3; index++) {
+      const res = await axios.post<ApiResponse>(
+        "http://localhost:3001/aiphoto/create",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        }
+      );
+      if (res.data && res.data.path) {
+        setImages((prev: string[]) => [
+          ...prev,
+          (process.env.NEXT_PUBLIC_API_URL ?? "") + res.data.path,
+        ]);
+        if (!Cookies.get("token")) {
+          Cookies.set("token", res.data.user || "", { expires: 30 });
+        }
+      }
+    }
+    try {
+    } catch (err) {
+      console.error("Upload failed", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div
+      className={`pl-20 pr-20 lg:mx-0 max-w-xl border-2 border-dashed border-slate-600 rounded-3xl ${
+        loading ? " opacity-50 pointer-events-none" : ""
+      }`}
+    >
+      <div>
+        <input
+          id="file-upload"
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+
+        <label
+          htmlFor="file-upload"
+          className="cursor-pointer flex flex-col items-center justify-center py-12"
+        >
+          <svg
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            className="mb-4"
+          >
+            <path
+              d="M12 3v12"
+              stroke="#7c3aed"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+              stroke="#7c3aed"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <div className="text-slate-500 text-center">
+            <span className="block font-medium">
+              Зургаа энд дарж оруулна уу
+            </span>
+            <span className="text-xs">
+              JPG, PNG болон WEBP (хамгийн ихдээ 10MB)
+            </span>
+          </div>
+        </label>
+      </div>
+    </div>
+  );
+}
