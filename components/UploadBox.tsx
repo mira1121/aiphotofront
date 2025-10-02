@@ -13,7 +13,7 @@ interface ApiResponse {
 export default function UploadBox() {
   const [loading, setLoading] = useState(false);
   const { setImages } = useImageContext();
-  const [error, setError] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -70,7 +70,6 @@ export default function UploadBox() {
           onChange={handleFileChange}
           className="hidden"
         />
-
         <label
           htmlFor="file-upload"
           className="cursor-pointer flex flex-col items-center justify-center py-12"
@@ -97,7 +96,7 @@ export default function UploadBox() {
               strokeLinejoin="round"
             />
           </svg>
-          <div className="text-slate-500 text-center">
+          <div className="text-slate-800 text-center">
             <span className="block font-medium">
               Зургаа энд дарж оруулна уу
             </span>
