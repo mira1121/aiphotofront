@@ -29,7 +29,7 @@ export default function UploadBox() {
     formData.append("type", "1");
     for (let index = 0; index < 3; index++) {
       const res = await axios.post<ApiResponse>(
-        "http://localhost:3001/aiphoto/create",
+        `${process.env.NEXT_PUBLIC_API_URL}/aiphoto/create`,
         formData,
         {
           headers: {
